@@ -29,5 +29,5 @@ app.get('/ping/:ip', async (req, res) => {
 
 app.listen(port, () => {
   // Registra la URL de tu servidor en Glitch
-  console.log(`Server listening at https://<nombre-de-tu-proyecto>.glitch.me`);
+  console.log(`Server listening at https://chipped-sophisticated-grey.glitch.me`);
 });
