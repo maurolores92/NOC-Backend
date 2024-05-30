@@ -1,22 +1,22 @@
-const express = require('express');
-const Client = require('ssh2-sftp-client');
+const express = require("express");
+const Client = require("ssh2-sftp-client");
 const sftp = new Client();
 const router = express.Router(); // Crea un router Express en lugar de un servidor Express
 
 router.use(express.json()); // Para poder parsear el cuerpo de las solicitudes HTTP en formato JSON
 
-router.post('/upload', async (req, res) => {
+router.post("/upload", async (req, res) => {
   const host = req.body.ip; // Obtiene la IP desde el cuerpo de la solicitud HTTP
 
   const config = {
     host: host,
-    port: '8889',
-    username: 'nortech',
-    password: 'Nor3164!'
+    port: "8889",
+    username: "nortech",
+    password: "Nor3164!",
   };
 
-  const remotePathToList = '/';
-  const localFilePath = './file.txt';
+  const remotePathToList = "/";
+  const localFilePath = "./file.txt";
 
   try {
     await sftp.connect(config);
@@ -25,10 +25,10 @@ router.post('/upload', async (req, res) => {
     console.log(list);
     await sftp.end();
 
-    res.status(200).send('File uploaded successfully.'); // Envía una respuesta de éxito al frontend
+    res.status(200).send("File uploaded successfully."); // Envía una respuesta de éxito al frontend
   } catch (error) {
     console.error(error.message);
-    res.status(500).send('Failed to upload file.'); // Envía una respuesta de error al frontend
+    res.status(500).send("Failed to upload file."); // Envía una respuesta de error al frontend
   }
 });
 
