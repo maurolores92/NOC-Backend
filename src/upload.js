@@ -1,71 +1,24 @@
-const express = require('express');
-const SFTPClient = require('ssh2-sftp-client');
-const { google } = require('googleapis');
-const drive = google.drive('v3');
-const key = require('./path-to-your-service-account-key.json');
-const fs = require('fs');
-const router = express.Router();
+const Client = require('ssh2-sftp-client');
+const sftp = new Client();
 
-const remoteFilePath = '/path-on-ubiquiti-device'; // Reemplaza esto con la ruta donde quieres que se guarde el archivo en el dispositivo Ubiquiti
+const config = {
+  host: 'ip de tu antena ubiquiti', // Reemplaza esto con la IP de tu antena Ubiquiti
+  port: '8888', // El puerto por defecto para SFTP es 22
+  username: 'nortech', // Reemplaza esto con el nombre de usuario de tu antena Ubiquiti
+  password: 'Nor3164!' // Reemplaza esto con la contraseña de tu antena Ubiquiti
+};
 
-const jwtClient = new google.auth.JWT(
-  key.client_email,
-  null,
-  key.private_key,
-  ['https://www.googleapis.com/auth/drive'],
-  null
-);
+const remotePathToList = 'ruta donde quieres subir el archivo en la antena'; // Reemplaza esto con la ruta donde quieres que se guarde el archivo en la antena Ubiquiti
+const localFilePath = './file.txt'; // Reemplaza 'file.txt' con el nombre de tu archivo
 
-router.post('/', async (req, res) => {
-  const { ip } = req.body;
+async function main() {
+  await sftp.connect(config);
+  await sftp.put(localFilePath, remotePathToList);
+  let list = await sftp.list(remotePathToList);
+  console.log(list);
+  await sftp.end();
+}
 
-  const sftp = new SFTPClient();
-
-  const username = 'nortech'; // Usuario
-  const password = 'Nor3164!'; // Contraseña
-
-  try {
-    await sftp.connect({
-      host: ip,
-      username: username,
-      password: password
-    });
-
-    jwtClient.authorize(async (err, tokens) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-
-      google.options({ auth: jwtClient });
-
-      const fileId = 'your-file-id';
-      const localFilePath = '/path/to/your/destination/file';
-      const dest = fs.createWriteStream(localFilePath);
-
-      drive.files.get(
-        { fileId: fileId, alt: 'media' },
-        { responseType: 'stream' },
-        (err, res) => {
-          res.data
-            .on('end', async () => {
-              console.log('Done downloading file from Google Drive.');
-              await sftp.put(localFilePath, remoteFilePath);
-              sftp.end();
-              res.status(200).send('File uploaded successfully.');
-            })
-            .on('error', err => {
-              console.error('Error downloading file.');
-              res.status(500).send('Error uploading file.');
-            })
-            .pipe(dest);
-        }
-      );
-    });
-  } catch (error) {
-    console.error('Error uploading file:', error);
-    res.status(500).send('Error uploading file.');
-  }
+main().catch((err) => {
+  console.error(err.message);
 });
-
-module.exports = router;
