@@ -1,9 +1,20 @@
 const express = require('express');
 const SFTPClient = require('ssh2-sftp-client');
+const { google } = require('googleapis');
+const drive = google.drive('v3');
+const key = require('./path-to-your-service-account-key.json');
+const fs = require('fs');
 const router = express.Router();
 
-const localFilePath = './path-to-your-file'; // Reemplaza esto con la ruta al archivo que quieres enviar
 const remoteFilePath = '/path-on-ubiquiti-device'; // Reemplaza esto con la ruta donde quieres que se guarde el archivo en el dispositivo Ubiquiti
+
+const jwtClient = new google.auth.JWT(
+  key.client_email,
+  null,
+  key.private_key,
+  ['https://www.googleapis.com/auth/drive'],
+  null
+);
 
 router.post('/', async (req, res) => {
   const { ip } = req.body;
@@ -20,11 +31,37 @@ router.post('/', async (req, res) => {
       password: password
     });
 
-    await sftp.put(localFilePath, remoteFilePath);
+    jwtClient.authorize(async (err, tokens) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
 
-    sftp.end();
+      google.options({ auth: jwtClient });
 
-    res.status(200).send('File uploaded successfully.');
+      const fileId = 'your-file-id';
+      const localFilePath = '/path/to/your/destination/file';
+      const dest = fs.createWriteStream(localFilePath);
+
+      drive.files.get(
+        { fileId: fileId, alt: 'media' },
+        { responseType: 'stream' },
+        (err, res) => {
+          res.data
+            .on('end', async () => {
+              console.log('Done downloading file from Google Drive.');
+              await sftp.put(localFilePath, remoteFilePath);
+              sftp.end();
+              res.status(200).send('File uploaded successfully.');
+            })
+            .on('error', err => {
+              console.error('Error downloading file.');
+              res.status(500).send('Error uploading file.');
+            })
+            .pipe(dest);
+        }
+      );
+    });
   } catch (error) {
     console.error('Error uploading file:', error);
     res.status(500).send('Error uploading file.');
