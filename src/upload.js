@@ -10,7 +10,7 @@ router.post('/upload', async (req, res) => {
 
   const config = {
     host: host,
-    port: '8888',
+    port: '8889',
     username: 'nortech',
     password: 'Nor3164!'
   };
