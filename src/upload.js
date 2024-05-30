@@ -8,6 +8,8 @@ router.use(express.json()); // Para poder parsear el cuerpo de las solicitudes H
 router.post("/upload", async (req, res) => {
   const { ip: host, port, username, password } = req.body; // Obtiene la IP, el puerto, el nombre de usuario y la contraseña desde el cuerpo de la solicitud HTTP
 
+  console.log(`Host: ${host}, Port: ${port}, Username: ${username}, Password: ${password}`); // Imprime los datos recibidos en la consola
+
   const config = {
     host,
     port,
