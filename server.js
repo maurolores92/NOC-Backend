@@ -16,12 +16,12 @@ app.get("/", (req, res) => {
 
 app.get("/ping/:ip", pingIp);
 
-app.listen(port, () => {
-  // Registra la URL de tu servidor en Glitch
-  console.log(
-    `Server listening at https://chipped-sophisticated-grey.glitch.me`
-  );
+app.post("/connect", (req, res) => {
+  const { host, port, username, password } = req.body;
+  connectUbiquiti(host, port, username, password);
+  res.send("Connection attempt started");
+});
 
-  // Conexión a la antena Ubiquiti
-  connectUbiquiti();
+app.listen(port, () => {
+  console.log(`Server listening at https://chipped-sophisticated-grey.glitch.me`);
 });
