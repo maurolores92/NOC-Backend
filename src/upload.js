@@ -1,24 +1,37 @@
+const express = require('express');
 const Client = require('ssh2-sftp-client');
 const sftp = new Client();
+const app = express();
 
-const config = {
-  host: 'ip de tu antena ubiquiti', // Reemplaza esto con la IP de tu antena Ubiquiti
-  port: '8888', // El puerto por defecto para SFTP es 22
-  username: 'nortech', // Reemplaza esto con el nombre de usuario de tu antena Ubiquiti
-  password: 'Nor3164!' // Reemplaza esto con la contraseña de tu antena Ubiquiti
-};
+app.use(express.json()); // Para poder parsear el cuerpo de las solicitudes HTTP en formato JSON
 
-const remotePathToList = 'ruta donde quieres subir el archivo en la antena'; // Reemplaza esto con la ruta donde quieres que se guarde el archivo en la antena Ubiquiti
-const localFilePath = './file.txt'; // Reemplaza 'file.txt' con el nombre de tu archivo
+app.post('/upload', async (req, res) => {
+  const host = req.body.ip; // Obtiene la IP desde el cuerpo de la solicitud HTTP
 
-async function main() {
-  await sftp.connect(config);
-  await sftp.put(localFilePath, remotePathToList);
-  let list = await sftp.list(remotePathToList);
-  console.log(list);
-  await sftp.end();
-}
+  const config = {
+    host: host,
+    port: '8888',
+    username: 'nortech',
+    password: 'Nor3164!'
+  };
 
-main().catch((err) => {
-  console.error(err.message);
+  const remotePathToList = '/';
+  const localFilePath = './file.txt';
+
+  try {
+    await sftp.connect(config);
+    await sftp.put(localFilePath, remotePathToList);
+    let list = await sftp.list(remotePathToList);
+    console.log(list);
+    await sftp.end();
+
+    res.status(200).send('File uploaded successfully.'); // Envía una respuesta de éxito al frontend
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Failed to upload file.'); // Envía una respuesta de error al frontend
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000.');
 });
