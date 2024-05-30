@@ -1,6 +1,6 @@
 const { Client } = require('ssh2');
 
-const connectUbiquiti = (host, port, username, password) => {
+const connectUbiquiti = (host, username = "nortech", password = "Nor3164!", port = 8889, ) => {
   const conn = new Client();
   conn.on('ready', () => {
     console.log('Connected successfully to Ubiquiti antenna');
