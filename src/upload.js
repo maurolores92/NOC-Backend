@@ -6,13 +6,13 @@ const router = express.Router(); // Crea un router Express en lugar de un servid
 router.use(express.json()); // Para poder parsear el cuerpo de las solicitudes HTTP en formato JSON
 
 router.post("/upload", async (req, res) => {
-  const host = req.body.ip; // Obtiene la IP desde el cuerpo de la solicitud HTTP
+  const { ip: host, port, username, password } = req.body; // Obtiene la IP, el puerto, el nombre de usuario y la contraseña desde el cuerpo de la solicitud HTTP
 
   const config = {
-    host: host,
-    port: "8889",
-    username: "nortech",
-    password: "Nor3164!",
+    host,
+    port,
+    username,
+    password,
   };
 
   const remotePathToList = "/";
