@@ -1,11 +1,11 @@
 const express = require('express');
 const Client = require('ssh2-sftp-client');
 const sftp = new Client();
-const app = express();
+const router = express.Router(); // Crea un router Express en lugar de un servidor Express
 
-app.use(express.json()); // Para poder parsear el cuerpo de las solicitudes HTTP en formato JSON
+router.use(express.json()); // Para poder parsear el cuerpo de las solicitudes HTTP en formato JSON
 
-app.post('/upload', async (req, res) => {
+router.post('/upload', async (req, res) => {
   const host = req.body.ip; // Obtiene la IP desde el cuerpo de la solicitud HTTP
 
   const config = {
@@ -32,6 +32,4 @@ app.post('/upload', async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000.');
-});
+module.exports = router; // Exporta el router en lugar de iniciar un servidor
