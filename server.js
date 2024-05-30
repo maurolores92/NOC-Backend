@@ -1,7 +1,7 @@
 const express = require("express");
-const ping = require("ping");
 const cors = require("cors");
-const { Client } = require('ssh2');
+const pingIp = require('./src/ping'); // Asegúrate de que la ruta sea correcta
+const connectUbiquiti = require('./src/connect'); // Asegúrate de que la ruta sea correcta
 const app = express();
 
 app.use(cors());
@@ -14,37 +14,14 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.get("/ping/:ip", async (req, res) => {
-  const { ip } = req.params;
+app.get("/ping/:ip", pingIp);
 
-  try {
-    const result = await ping.promise.probe(ip);
-    res.json(result);
-  } catch (error) {
-    console.error("Error pinging:", error);
-    res
-      .status(500)
-      .json({ error: "Error pinging the IP address", details: error });
-  }
-});
-
-app.listen(port, async () => {
+app.listen(port, () => {
   // Registra la URL de tu servidor en Glitch
   console.log(
     `Server listening at https://chipped-sophisticated-grey.glitch.me`
   );
 
   // Conexión a la antena Ubiquiti
-  const conn = new Client();
-  conn.on('ready', () => {
-    console.log('Connected successfully to Ubiquiti antenna');
-    conn.end();
-  }).on('error', (error) => {
-    console.error("Failed to connect to Ubiquiti antenna:", error.message);
-  }).connect({
-    host: "186.1.242.50",
-    port: 8889,
-    username: "nortech",
-    password: "Nor3164!",
-  });
+  connectUbiquiti();
 });
