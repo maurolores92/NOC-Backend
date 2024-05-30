@@ -1,9 +1,12 @@
 const express = require('express');
 const ping = require('ping');
 const cors = require('cors');
+const uploadRoute = require('./src/upload');
 const app = express();
 
 app.use(cors());
+app.use(express.json());
+app.use('/api/upload', uploadRoute);
 
 // Usa el puerto que Glitch proporciona, o 3000 si no se proporciona ninguno
 const port = process.env.PORT || 3000;
