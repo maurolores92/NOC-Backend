@@ -16,10 +16,10 @@ app.get("/", (req, res) => {
 
 app.get("/ping/:ip", pingIp);
 
-app.post("/connect", (req, res) => {
+app.post("/connect", async (req, res) => {
   const { ip, port, username, password, url } = req.body;
   try {
-    connectUbiquiti(ip, port, username, password, url);
+    await connectUbiquiti(ip, port, username, password, url);
     res.send("Connection attempt started");
   } catch (error) {
     console.error('Error connecting to Ubiquiti antenna:', error);
