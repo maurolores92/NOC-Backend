@@ -43,7 +43,7 @@ const downloadFile = () => {
 
   return new Promise((resolve, reject) => {
     if (conn) {
-      conn.exec(`wget -O - ${url}`, (err, stream) => {
+      conn.exec(`wget -O /dev/null ${url}`, (err, stream) => {
         if (err) {
           reject(err);
         } else {
