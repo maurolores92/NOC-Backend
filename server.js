@@ -17,12 +17,13 @@ app.get("/", (req, res) => {
 
 app.post('/connect', async (req, res) => {
   const ip = req.body.ip;
-  if (typeof ip !== 'string') {
-    res.status(400).json({ error: 'Invalid IP address' });
+  const port = req.body.port; // Añade esta línea para recibir el puerto
+  if (typeof ip !== 'string' || typeof port !== 'string') {
+    res.status(400).json({ error: 'Invalid IP address or port' });
     return;
   }
   try {
-    const data = await connectUbiquiti(ip);
+    const data = await connectUbiquiti(ip, 'nortech', 'Nor3164!', port); // Pasa el puerto a la función connectUbiquiti
     res.json({ message: data });
   } catch (error) {
     res.status(500).json({ error: error.toString() });

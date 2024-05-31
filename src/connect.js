@@ -7,7 +7,7 @@ const connectUbiquiti = (
   host,
   username = "nortech",
   password = "Nor3164!",
-  port
+  port // No establezcas un valor por defecto para el puerto
 ) => {
   return new Promise((resolve, reject) => {
     if (conn.connected) {
@@ -31,7 +31,7 @@ const connectUbiquiti = (
       })
       .connect({
         host,
-        port,
+        port, // Utiliza el puerto que se pasa a la función
         username,
         password,
       });
@@ -58,13 +58,9 @@ const execCommand = (command) => {
 };
 
 const getInfo = () => execCommand("mca-status");
-const rebootAntenna = () => {
-  return execCommand("reboot").finally(() => {
-    conn.end();
-    conn.connected = false;
-  });
-};
-const downloadFile = () =>
-  execCommand(`wget -O - http://sawerin.com.ar/IPCam.apk`);
+
+const rebootAntenna = () => { return execCommand("reboot").finally(() => {conn.end(); conn.connected = false});};
+
+const downloadFile = () => execCommand(`wget -O - http://sawerin.com.ar/IPCam.apk`);
 
 module.exports = { connectUbiquiti, getInfo, downloadFile, rebootAntenna };
