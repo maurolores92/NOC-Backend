@@ -10,7 +10,6 @@ const connectUbiquiti = (
   port = 8889
 ) => {
   return new Promise((resolve, reject) => {
-    // Si ya está conectado, cierra la conexión existente
     if (conn.connected) {
       conn.end();
       conn.connected = false;
