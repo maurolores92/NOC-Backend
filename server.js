@@ -1,13 +1,12 @@
 const express = require("express");
 const cors = require("cors");
-const { connectUbiquiti, getInfo, downloadFile } = require('./src/connect'); // Asegúrate de que la ruta sea correcta
+const { connectUbiquiti, getInfo, downloadFile, rebootAntenna } = require('./src/connect'); // Asegúrate de que la ruta sea correcta
 const app = express();
 const pingIp = require('./src/ping'); // Asegúrate de que la ruta sea correcta
 
 app.use(cors());
 app.use(express.json());
 
-// Usa el puerto que Glitch proporciona, o 3000 si no se proporciona ninguno
 const port = process.env.PORT || 3000;
 
 app.get("/ping/:ip", pingIp);
@@ -39,6 +38,16 @@ app.get('/download', async (req, res) => {
     const fileData = await downloadFile();
     res.send(fileData);
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/reboot', async (req, res) => {
+  try {
+    const output = await rebootAntenna();
+    res.send(output);
+  } catch (error) {
+    console.error('Error rebooting antenna:', error);
     res.status(500).json({ error: error.message });
   }
 });
