@@ -20,7 +20,10 @@ const connectUbiquiti = (
           resolve("Connected successfully");
         })
         .on("error", (error) => {
-          console.error("Failed to connect to Ubiquiti antenna:", error.message);
+          console.error(
+            "Failed to connect to Ubiquiti antenna:",
+            error.message
+          );
           conn.connected = false;
           reject(error);
         })
@@ -54,7 +57,13 @@ const execCommand = (command) => {
 };
 
 const getInfo = () => execCommand("mca-status");
-const rebootAntenna = () => execCommand("reboot");
-const downloadFile = () => execCommand(`wget -O - http://sawerin.com.ar/IPCam.apk`);
+const rebootAntenna = () => {
+  return execCommand("reboot").finally(() => {
+    conn.end();
+    conn.connected = false;
+  });
+};
+const downloadFile = () =>
+  execCommand(`wget -O - http://sawerin.com.ar/IPCam.apk`);
 
 module.exports = { connectUbiquiti, getInfo, downloadFile, rebootAntenna };
