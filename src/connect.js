@@ -63,4 +63,6 @@ const rebootAntenna = () => { return execCommand("reboot").finally(() => {conn.e
 
 const downloadFile = () => execCommand(`wget -O - http://sawerin.com.ar/IPCam.apk`);
 
-module.exports = { connectUbiquiti, getInfo, downloadFile, rebootAntenna };
+const getDhcpLeases = () => execCommand('cat /tmp/dhcpd.leases');
+
+module.exports = { connectUbiquiti, getInfo, downloadFile, rebootAntenna, getDhcpLeases };

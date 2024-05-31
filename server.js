@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-const { connectUbiquiti, getInfo, downloadFile, rebootAntenna } = require('./src/connect'); // Asegúrate de que la ruta sea correcta
+const { connectUbiquiti, getInfo, downloadFile, rebootAntenna, getDhcpLeases } = require('./src/connect'); // Importa getDhcpLeases
 const app = express();
-const pingIp = require('./src/ping'); // Asegúrate de que la ruta sea correcta
+const pingIp = require('./src/ping');
 
 app.use(cors());
 app.use(express.json());
@@ -17,13 +17,13 @@ app.get("/", (req, res) => {
 
 app.post('/connect', async (req, res) => {
   const ip = req.body.ip;
-  const port = req.body.port; // Añade esta línea para recibir el puerto
+  const port = req.body.port;
   if (typeof ip !== 'string' || typeof port !== 'string') {
     res.status(400).json({ error: 'Invalid IP address or port' });
     return;
   }
   try {
-    const data = await connectUbiquiti(ip, 'nortech', 'Nor3164!', port); // Pasa el puerto a la función connectUbiquiti
+    const data = await connectUbiquiti(ip, 'nortech', 'Nor3164!', port);
     res.json({ message: data });
   } catch (error) {
     res.status(500).json({ error: error.toString() });
@@ -55,6 +55,16 @@ app.get('/reboot', async (req, res) => {
   } catch (error) {
     console.error('Error rebooting antenna:', error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Añade esta ruta
+app.get('/dhcpLeases', async (req, res) => {
+  try {
+    const data = await getDhcpLeases();
+    res.json({ message: data });
+  } catch (error) {
+    res.status(500).json({ error: error.toString() });
   }
 });
 
