@@ -16,18 +16,12 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.post("/connect", async (req, res) => {
-  const { ip, username, password } = req.body;
+app.post('/connect', async (req, res) => {
   try {
-    const isConnected = await connectUbiquiti(ip, username, password);
-    if (isConnected) {
-      res.send('Connected successfully to Ubiquiti antenna');
-    } else {
-      res.send('Failed to connect to Ubiquiti antenna');
-    }
+    const data = await connectUbiquiti(req.body.ip);
+    res.status(200).json(data);
   } catch (error) {
-    console.error('Error connecting to Ubiquiti antenna:', error);
-    res.status(500).send('Error connecting to Ubiquiti antenna');
+    res.status(500).json({ error: error.toString() });
   }
 });
 
