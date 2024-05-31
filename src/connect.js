@@ -6,7 +6,15 @@ const connectUbiquiti = (host , username = "nortech", password = "Nor3164!", por
 
     conn.on('ready', () => {
       console.log('Connected successfully to Ubiquiti antenna');
-      resolve(conn);
+      conn.exec('mca-status', (err, stream) => {
+        if (err) {
+          reject(err);
+        } else {
+          let output = '';
+          stream.on('data', data => output += data.toString())
+                .on('end', () => resolve(output));
+        }
+      });
     }).on('error', (error) => {
       console.error("Failed to connect to Ubiquiti antenna:", error.message);
       reject(error);
