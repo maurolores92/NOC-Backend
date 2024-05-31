@@ -1,6 +1,6 @@
 const { Client } = require('ssh2');
 
-const connectUbiquiti = (host, username = "nortech", password = "Nor3164!", port = 8889) => {
+const connectUbiquiti = (host , username = "nortech", password = "Nor3164!", port = 8889) => {
   return new Promise((resolve, reject) => {
     const conn = new Client();
 
