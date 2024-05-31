@@ -38,4 +38,22 @@ const getInfo = () => {
   });
 };
 
+const downloadFile = (url) => {
+  return new Promise((resolve, reject) => {
+    if (conn) {
+      conn.exec(`wget -O - ${url}`, (err, stream) => {
+        if (err) {
+          reject(err);
+        } else {
+          let output = '';
+          stream.on('data', data => output += data.toString())
+                .on('end', () => resolve(output));
+        }
+      });
+    } else {
+      reject('Not connected');
+    }
+  });
+};
+
 module.exports = { connectUbiquiti, getInfo };
