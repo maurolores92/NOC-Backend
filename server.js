@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const connectUbiquiti = require('./src/connect'); // Asegúrate de que la ruta sea correcta
+const { connectUbiquiti, getInfo } = require('./src/connect'); // Asegúrate de que la ruta sea correcta
 const app = express();
 const pingIp = require('./src/ping'); // Asegúrate de que la ruta sea correcta
 
@@ -22,6 +22,15 @@ app.post('/connect', async (req, res) => {
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: error.toString() });
+  }
+});
+
+app.get('/info', async (req, res) => {
+  try {
+    const message = await getInfo();
+    res.json({ message });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
