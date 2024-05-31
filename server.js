@@ -17,9 +17,14 @@ app.get("/", (req, res) => {
 app.get("/ping/:ip", pingIp);
 
 app.post("/connect", (req, res) => {
-  const { host, port, username, password, url } = req.body;
-  connectUbiquiti(host, port, username, password, url);
-  res.send("Connection attempt started");
+  const { ip, port, username, password, url } = req.body;
+  try {
+    connectUbiquiti(ip, port, username, password, url);
+    res.send("Connection attempt started");
+  } catch (error) {
+    console.error('Error connecting to Ubiquiti antenna:', error);
+    res.status(500).send('Error connecting to Ubiquiti antenna');
+  }
 });
 
 app.listen(port, () => {
