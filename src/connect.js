@@ -10,30 +10,32 @@ const connectUbiquiti = (
   port = 8889
 ) => {
   return new Promise((resolve, reject) => {
+    // Si ya está conectado, cierra la conexión existente
     if (conn.connected) {
-      resolve("Already connected");
-    } else {
-      conn
-        .on("ready", () => {
-          console.log("Connected successfully to Ubiquiti antenna");
-          conn.connected = true;
-          resolve("Connected successfully");
-        })
-        .on("error", (error) => {
-          console.error(
-            "Failed to connect to Ubiquiti antenna:",
-            error.message
-          );
-          conn.connected = false;
-          reject(error);
-        })
-        .connect({
-          host,
-          port,
-          username,
-          password,
-        });
+      conn.end();
+      conn.connected = false;
     }
+
+    conn
+      .on("ready", () => {
+        console.log("Connected successfully to Ubiquiti antenna");
+        conn.connected = true;
+        resolve("Connected successfully");
+      })
+      .on("error", (error) => {
+        console.error(
+          "Failed to connect to Ubiquiti antenna:",
+          error.message
+        );
+        conn.connected = false;
+        reject(error);
+      })
+      .connect({
+        host,
+        port,
+        username,
+        password,
+      });
   });
 };
 
