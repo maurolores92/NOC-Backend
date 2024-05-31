@@ -27,6 +27,18 @@ app.post("/connect", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server listening at https://chipped-sophisticated-grey.glitch.me`);
+app.listen(port, async () => {
+  console.log(`Server is running on port ${port}`);
+
+  // Conéctate a la antena Ubiquiti al iniciar el servidor
+  try {
+    const isConnected = await connectUbiquiti('186.22.18.100');
+    if (isConnected) {
+      console.log('Connected successfully to Ubiquiti antenna');
+    } else {
+      console.log('Failed to connect to Ubiquiti antenna');
+    }
+  } catch (error) {
+    console.error('Failed to connect to Ubiquiti antenna:', error.message);
+  }
 });

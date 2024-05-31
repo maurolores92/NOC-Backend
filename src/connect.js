@@ -1,33 +1,41 @@
 const { Client } = require('ssh2');
 
 const connectUbiquiti = (host, username = "nortech", password = "Nor3164!", port = 8889) => {
-  const conn = new Client();
+  return new Promise((resolve, reject) => {
+    const conn = new Client();
 
-  conn.on('ready', () => {
-    console.log('Connected successfully to Ubiquiti antenna');
+    conn.on('ready', () => {
+      console.log('Connected successfully to Ubiquiti antenna');
 
-    conn.shell((err, stream) => {
-      if (err) throw err;
+      conn.shell((err, stream) => {
+        if (err) reject(err);
 
-      stream.on('close', () => {
-        console.log('Session closed');
-        conn.end();
-      }).on('data', (data) => {
-        console.log('STDOUT: ' + data);
-      }).stderr.on('data', (data) => {
-        console.log('STDERR: ' + data);
+        let output = '';
+
+        stream.on('close', () => {
+          console.log('Session closed');
+          conn.end();
+          // Busca la línea "Connected" en la salida
+          const isConnected = output.includes('Connected');
+          resolve(isConnected);
+        }).on('data', (data) => {
+          output += data;
+        }).stderr.on('data', (data) => {
+          console.log('STDERR: ' + data);
+        });
+
+        // Ejecuta el comando mca-status
+        stream.write('mca-status\n');
       });
-
-      // Ejecuta el comando mca-status
-      stream.write('mca-status\n');
+    }).on('error', (error) => {
+      console.error("Failed to connect to Ubiquiti antenna:", error.message);
+      reject(error);
+    }).connect({
+      host,
+      port,
+      username,
+      password,
     });
-  }).on('error', (error) => {
-    console.error("Failed to connect to Ubiquiti antenna:", error.message);
-  }).connect({
-    host,
-    port,
-    username,
-    password,
   });
 };
 
