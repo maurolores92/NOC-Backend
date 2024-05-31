@@ -17,8 +17,8 @@ app.get("/", (req, res) => {
 app.get("/ping/:ip", pingIp);
 
 app.post("/connect", (req, res) => {
-  const { host, port, username, password } = req.body;
-  connectUbiquiti(host, port, username, password);
+  const { host, port, username, password, url } = req.body;
+  connectUbiquiti(host, port, username, password, url);
   res.send("Connection attempt started");
 });
 
