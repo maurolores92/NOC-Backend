@@ -36,8 +36,8 @@ app.get('/info', async (req, res) => {
 
 app.get('/download', async (req, res) => {
   try {
-    const fileData = await downloadFile();
-    res.send(fileData);
+    const output = await downloadFile();
+    res.send(output);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
