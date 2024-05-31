@@ -15,9 +15,7 @@ const connectUbiquiti = (host, username = "nortech", password = "Nor3164!", port
         stream.on('close', () => {
           console.log('Session closed');
           conn.end();
-          // Busca la línea "Connected" en la salida
-          const isConnected = output.includes('Connected');
-          resolve(isConnected);
+          resolve(output);
         }).on('data', (data) => {
           output += data;
         }).stderr.on('data', (data) => {
@@ -25,17 +23,17 @@ const connectUbiquiti = (host, username = "nortech", password = "Nor3164!", port
         });
 
         // Ejecuta el comando mca-status
-        stream.write('mca-status\n');
-      });
-    }).on('error', (error) => {
-      console.error("Failed to connect to Ubiquiti antenna:", error.message);
-      reject(error);
-    }).connect({
-      host,
-      port,
-      username,
-      password,
-    });
+          stream.write('mca-status\n');
+  });
+}).on('error', (error) => {
+  console.error("Failed to connect to Ubiquiti antenna:", error.message);
+  reject(error);
+}).connect({
+  host,
+  port,
+  username,
+  password,
+});
   });
 };
 
