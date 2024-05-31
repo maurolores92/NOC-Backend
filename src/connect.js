@@ -7,7 +7,7 @@ const connectUbiquiti = (
   host,
   username = "nortech",
   password = "Nor3164!",
-  port = 8889
+  port
 ) => {
   return new Promise((resolve, reject) => {
     if (conn.connected) {
