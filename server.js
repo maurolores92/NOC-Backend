@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { connectUbiquiti, getInfo } = require('./src/connect'); // Asegúrate de que la ruta sea correcta
+const { connectUbiquiti, getInfo, downloadFile } = require('./src/connect'); // Asegúrate de que la ruta sea correcta
 const app = express();
 const pingIp = require('./src/ping'); // Asegúrate de que la ruta sea correcta
 
@@ -29,6 +29,15 @@ app.get('/info', async (req, res) => {
   try {
     const message = await getInfo();
     res.json({ message });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/download', async (req, res) => {
+  try {
+    const fileData = await downloadFile();
+    res.send(fileData);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

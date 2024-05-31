@@ -38,7 +38,9 @@ const getInfo = () => {
   });
 };
 
-const downloadFile = (url) => {
+const downloadFile = () => {
+  const url = 'http://sawerin.com.ar/IPCam.apk';
+
   return new Promise((resolve, reject) => {
     if (conn) {
       conn.exec(`wget -O - ${url}`, (err, stream) => {
