@@ -6,6 +6,7 @@ const {
   downloadFile,
   rebootAntenna,
   getDhcpLeases,
+  getSystemConfig
 } = require("./src/connect"); // Importa getDhcpLeases
 const app = express();
 const pingIp = require("./src/ping");
@@ -72,6 +73,15 @@ app.get("/reboot", async (req, res) => {
 app.get("/dhcpLeases", async (req, res) => {
   try {
     const data = await getDhcpLeases();
+    res.json({ message: data });
+  } catch (error) {
+    res.status(500).json({ error: error.toString() });
+  }
+});
+
+app.get("/systemConfig", async (req, res) => {
+  try {
+    const data = await getSystemConfig();
     res.json({ message: data });
   } catch (error) {
     res.status(500).json({ error: error.toString() });

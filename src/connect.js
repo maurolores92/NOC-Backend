@@ -65,4 +65,6 @@ const downloadFile = () => execCommand(`wget -O - http://sawerin.com.ar/IPCam.ap
 
 const getDhcpLeases = () => execCommand('cat /tmp/dhcpd.leases');
 
-module.exports = { connectUbiquiti, getInfo, downloadFile, rebootAntenna, getDhcpLeases };
+const getSystemConfig = () => execCommand('cat /tmp/system.cfg');
+
+module.exports = { connectUbiquiti, getInfo, downloadFile, rebootAntenna, getDhcpLeases, getSystemConfig };
