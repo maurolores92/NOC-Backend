@@ -5,8 +5,8 @@ conn.connected = false;
 
 const connectUbiquiti = (
   host,
-  username = "nortech",
-  password = "Nor3164!",
+  username,
+  password,
   port // No establezcas un valor por defecto para el puerto
 ) => {
   return new Promise((resolve, reject) => {
