@@ -7,7 +7,7 @@ const {
   rebootAntenna,
   getDhcpLeases,
   getSystemConfig
-} = require("./src/connect"); // Importa getDhcpLeases
+} = require("./src/connect");
 const app = express();
 const pingIp = require("./src/ping");
 
