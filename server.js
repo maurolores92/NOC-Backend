@@ -19,7 +19,7 @@ const port = process.env.PORT || 3000;
 app.get("/ping/:ip", pingIp);
 
 app.get("/", (req, res) => {
-  res.json({ message: "Hello World!" });
+  res.json({ message: "Servidor Activo" });
 });
 
 app.post("/connect", async (req, res) => {
@@ -55,9 +55,10 @@ app.get("/download", async (req, res) => {
     const fileData = await downloadFile();
     res.json({ message: fileData });
   } catch (error) {
+    console.error("Error download file antenna:", error);
     res.status(500).json({ error: error.message });
   }
-});
+}); 
 
 app.get("/reboot", async (req, res) => {
   try {
@@ -69,7 +70,6 @@ app.get("/reboot", async (req, res) => {
   }
 });
 
-// Añade esta ruta
 app.get("/dhcpLeases", async (req, res) => {
   try {
     const data = await getDhcpLeases();
@@ -88,6 +88,6 @@ app.get("/systemConfig", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server is running and accessible on the network at http://0.0.0.0:${port}`);
 });

@@ -7,7 +7,7 @@ const connectUbiquiti = (
   host,
   username,
   password,
-  port // No establezcas un valor por defecto para el puerto
+  port
 ) => {
   return new Promise((resolve, reject) => {
     if (conn.connected) {
@@ -61,7 +61,7 @@ const getInfo = () => execCommand("mca-status");
 
 const rebootAntenna = () => { return execCommand("reboot").finally(() => {conn.end(); conn.connected = false});};
 
-const downloadFile = () => execCommand(`wget -O - http://sawerin.com.ar/IPCam.apk`);
+const downloadFile = () => execCommand('wget -o /dev/null http://sawerin.com.ar/IPCam.apk');
 
 const getDhcpLeases = () => execCommand('cat /tmp/dhcpd.leases');
 
